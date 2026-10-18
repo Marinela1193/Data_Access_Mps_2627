@@ -9,9 +9,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Scanner;
 
-public class Serialize {
+public class SerializeContactObj {
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        ContactAgenda contactAgenda;
+        ContactObjAgenda contactAgenda;
         File file = new File("contacts.obj");
 
         if (file.exists()) {
@@ -19,17 +19,17 @@ public class Serialize {
             try (ObjectInputStream ois = new ObjectInputStream(
                     new FileInputStream("contacts.obj"))) {
 
-                contactAgenda = (ContactAgenda) ois.readObject();
+                contactAgenda = (ContactObjAgenda) ois.readObject();
 
             } catch (ClassNotFoundException e) {
 
                 System.out.println("Class not found: " + e.getMessage());
-                contactAgenda = new ContactAgenda();
+                contactAgenda = new ContactObjAgenda();
             }
 
         } else {
 
-            contactAgenda = new ContactAgenda();
+            contactAgenda = new ContactObjAgenda();
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -47,7 +47,7 @@ public class Serialize {
             String phoneNumber = scanner.nextLine();
             System.out.print("Enter description: ");
             String description = scanner.nextLine();
-            Contact newContact = new Contact(name, surname, email, phoneNumber, description);
+            ContactObj newContact = new ContactObj(name, surname, email, phoneNumber, description);
             contactAgenda.addContact(newContact);
 
         } else if (response.equalsIgnoreCase("no")) {
@@ -61,7 +61,7 @@ public class Serialize {
                 System.out.print("Enter the phone number of the contact to search for: ");
                 String searchPhoneNumber = scanner.nextLine();
 
-                Contact contact = contactAgenda.searchContact(
+                ContactObj contact = contactAgenda.searchContact(
                         searchName,
                         searchSurname,
                         searchPhoneNumber);
