@@ -9,7 +9,7 @@ public class Main {
             SAXParser saxParser = SAXParserFactory.
                     newInstance().newSAXParser();
             saxParser.parse("contacts.xml", new
-                    MyXMLContactsObjHandler());
+                    ContactSAXHandler());
         } catch ( Exception e ) {
             e.printStackTrace();
         }
