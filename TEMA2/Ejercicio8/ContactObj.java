@@ -63,13 +63,6 @@ public class ContactObj implements Serializable {
         this.description = description;
     }
 
-    public void write(){
-        System.out.println ("Contact: " + name
-                + " " + surname
-                + ", Email: " + email
-                + ", Phone Number: " + phoneNumber
-                + ", Description: " + description);
-    }
 }
 
 
