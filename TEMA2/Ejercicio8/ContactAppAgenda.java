@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Scanner;
 
-public class SerializeContactObj {
+public class ContactAppAgenda {
     public static void main(String[] args) throws FileNotFoundException, IOException {
         ContactObjAgenda contactAgenda;
         File file = new File("contacts.obj");
