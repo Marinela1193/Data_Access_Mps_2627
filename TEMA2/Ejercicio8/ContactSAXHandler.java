@@ -4,13 +4,18 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ContactSAXHandler extends DefaultHandler {
     protected String tagContent;
-    private String name;
-    private String surname;
+
+    private ContactObj contact;
+
+    private List<ContactObj> contacts = new ArrayList<>();
+
     private String cellPhone;
     private String homePhone;
-    private String email;
     private String workPhone;
 
     private boolean insideEmails = false;
@@ -20,14 +25,13 @@ public class ContactSAXHandler extends DefaultHandler {
     public void startElement(String uri, String localName,
                              String qName, Attributes attributes) throws SAXException {
         if (qName.equals("contact")) {
-            name = null;
-            surname = null;
+
+            contact = new ContactObj();
 
             cellPhone = null;
             workPhone = null;
             homePhone = null;
 
-            email = null;
         }
 
         if (qName.equals("emails")) {
@@ -39,8 +43,7 @@ public class ContactSAXHandler extends DefaultHandler {
         }
     }
 
-    // Tag content, usually CDATA
-//
+    // Tag content
     @Override
     public void characters(char ch[], int start, int length)
             throws SAXException {
@@ -48,47 +51,51 @@ public class ContactSAXHandler extends DefaultHandler {
     }
 
     // Tag ending
-//
     @Override
     public void endElement(String uri, String localName, String qName)
             throws SAXException {
         if (!qName.isBlank()) {
             if (qName.equals("name")) {
-                name = tagContent;
+                contact.setName(tagContent);
+
             } else if (qName.equals("surname")) {
-                surname = tagContent;
+                contact.setSurname(tagContent);
+
             } else if (qName.equals("cell") && insidePhones) {
                 cellPhone = tagContent;
+
             } else if (qName.equals("work") && insidePhones) {
                 workPhone = tagContent;
+
             } else if (qName.equals("home") && insidePhones) {
                 homePhone = tagContent;
+
             } else if (qName.equals("work") && insideEmails) {
-                email = tagContent;
+                contact.setEmail(tagContent);
+
             } else if (qName.equals("home") && insideEmails) {
-                email = tagContent;
+                contact.setEmail(tagContent);
+
             } else if (qName.equals("emails")) {
                 insideEmails = false;
+
             } else if (qName.equals("phones")) {
                 insidePhones = false;
+
             } else if (qName.equals("contact")) {
 
-                String phoneNumber = null;
-
                 if (cellPhone != null) {
-                    phoneNumber = cellPhone;
+                    contact.setPhoneNumber(cellPhone);
                 } else if (workPhone != null) {
-                    phoneNumber = workPhone;
+                    contact.setPhoneNumber(workPhone);
                 } else if (homePhone != null) {
-                    phoneNumber = homePhone;
+                    contact.setPhoneNumber(homePhone);
                 }
-
-                System.out.println(
-                        name + " " + surname +
-                                " - " + phoneNumber
-                );
+                contacts.add(contact);
             }
-
         }
+    }
+    public List<ContactObj> getContacts() {
+        return contacts;
     }
 }
