@@ -1,12 +1,6 @@
 package TEMA2.Ejercicio7;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.Scanner;
 
 public class ContactAppAgenda {
@@ -37,41 +31,59 @@ public class ContactAppAgenda {
         }
 
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Would you like to add a new contact? (yes/no): ");
-        String response = scanner.nextLine();
+        System.out.println("Choose an option:");
+        System.out.println("1. Add contact");
+        System.out.println("2. Search contact by full name");
+        System.out.println("3. Search contact by phone");
+
+        int option = scanner.nextInt();
+        scanner.nextLine();
 
         //añadir contacto
-        if (response.equalsIgnoreCase("yes")) {
+        if (option == 1) {
             ContactObj newContact = createContact(scanner);
             contactAgenda.addContact(newContact);
-        } else if (response.equalsIgnoreCase("no")) {
-            System.out.println("Would you like to search for a contact? (yes/no): ");
 
-            String searchResponse = scanner.nextLine();
+        } else if (option == 2) {
+            System.out.print("Enter the name: ");
+            String searchName = scanner.nextLine();
 
-            if (searchResponse.equalsIgnoreCase("yes")) {
-                System.out.print("Enter the name: ");
-                String searchName = scanner.nextLine();
-                System.out.print("Enter the surname: ");
-                String searchSurname = scanner.nextLine();
-                //BUSCAR OPR NOMBRE METODO
-                System.out.print("Enter the phone number: ");
-                String searchPhoneNumber = scanner.nextLine();
-                //BUSCAR POR TELEFONO METODO
-                ContactObj contact = contactAgenda.searchContact(
-                        searchName,
-                        searchSurname,
-                        searchPhoneNumber);
+            System.out.print("Enter the surname: ");
+            String searchSurname = scanner.nextLine();
 
+            if (!searchName.isBlank() && !searchSurname.isBlank()) {
+                ContactObj contact = contactAgenda.searchContactByFullName(searchName, searchSurname);
                 if (contact != null) {
                     System.out.println("Contact found: " + contact);
                 } else {
                     System.out.println("Contact not found.");
                 }
-            }
 
-            try (ObjectOutputStream oos = new ObjectOutputStream(
-                    new FileOutputStream(file))) {
+            } else {
+                System.out.println("Name and surname cannot be empty.");
+            }
+            //BUSCAR POR TELEFONO METODO
+        } else if (option == 3) {
+            System.out.print("Enter the phone number to search the contact: ");
+            String searchPhoneNumber = scanner.nextLine();
+
+            if (!searchPhoneNumber.isBlank()) {
+                ContactObj contact = contactAgenda.searchContactByPhone(searchPhoneNumber);
+                if (contact != null) {
+                    System.out.println("Contact found: " + contact);
+                } else {
+                    System.out.println("Contact not found.");
+                }
+
+            } else {
+                System.out.println("Phone number cannot be empty.");
+            }
+        }else {
+            System.out.println("Invalid option.");
+        }
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(
+                new FileOutputStream(file))) {
 
                 oos.writeObject(contactAgenda);
 
@@ -85,7 +97,6 @@ public class ContactAppAgenda {
             scanner.close();
         }
 
-    }
     private static ContactObj createContact(Scanner scanner) {
 
         System.out.print("Enter name: ");
@@ -99,15 +110,13 @@ public class ContactAppAgenda {
         System.out.print("Enter description: ");
         String description = scanner.nextLine();
 
-        ContactObj newContact =
-                new ContactObj(
-                        name,
-                        surname,
-                        email,
-                        phoneNumber,
-                        description
-                );
-        return newContact;
+        return new ContactObj(
+                name,
+                surname,
+                email,
+                phoneNumber,
+                description
+        );
     }
 }
 
