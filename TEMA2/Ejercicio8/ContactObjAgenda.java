@@ -15,8 +15,10 @@ public class ContactObjAgenda implements Serializable {
 
     public void addContact(ContactObj contact) {
 
-        ContactObj existingContact = searchContact(contact.getName(), contact.getSurname(), contact.getPhoneNumber());
-        if (existingContact != null) {
+        ContactObj existingContact = searchContactByFullName(contact.getName(), contact.getSurname());
+        ContactObj existingContactNumber = searchContactByPhone(contact.getPhoneNumber());
+
+        if (existingContact != null || existingContactNumber != null) {
             System.out.println("Contact with the same name and surname already exists.");
             return;
         } else {
@@ -25,17 +27,27 @@ public class ContactObjAgenda implements Serializable {
         }
     }
 
-    ContactObj searchContact(String name, String surname, String phoneNumber) {
+    ContactObj searchContactByFullName(String name, String surname) {
         for (ContactObj contact : contacts) {
             if (contact.getName().equals(name) && contact.getSurname().equals(surname)) {
                 return contact;
-            } else if (contact.getPhoneNumber().equals(phoneNumber)) {
+            } else {
+                System.out.println("Contact not found with this name");
+                }
+            }
+        return null;
+    }
+
+    ContactObj searchContactByPhone(String phoneNumber) {
+        for(ContactObj contact : contacts) {
+            if(contact.getPhoneNumber().equals(phoneNumber)) {
                 return contact;
+            }else{
+                System.out.println("Contact not found with this number");
             }
         }
         return null;
     }
-
     public void showContacts() {
         for (ContactObj contact : contacts) {
             System.out.println(contact);
