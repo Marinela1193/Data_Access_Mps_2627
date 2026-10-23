@@ -1,0 +1,26 @@
+package org.example;
+
+import java.sql.*;
+
+public class ConsultaBD1 {
+    public static void main(String[] args)
+            throws ClassNotFoundException, SQLException {
+        Class.forName("org.postgresql.Driver");
+        String url = "jdbc:postgresql://localhost:5432/VTInstitute";
+        String user = "postgres";
+        String password = "POSTGRES";
+        Connection con = DriverManager.getConnection(url, user, password);
+        Statement statement = con.createStatement();
+        String SQLsentence = "SELECT * FROM subjects ORDER BY code";
+        ResultSet rs = statement.executeQuery(SQLsentence);
+        System.out.println("Code" + "\t" + "Name" + "\t" + "YEAR");
+        System.out.println("-----------------------------------------");
+        while (rs.next()) {
+            System.out.println(rs.getString(1) + "\t " +
+                    rs.getString(2) + "\t " + rs.getString(3));
+        }
+        rs.close();
+        con.close();
+    }
+}
+
