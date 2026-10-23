@@ -19,6 +19,13 @@ public class ConsultaBD1 {
             System.out.println(rs.getString(1) + "\t " +
                     rs.getString(2) + "\t " + rs.getString(3));
         }
+
+        /*String insertSQL = "INSERT INTO subjects (name, year)" +
+                "VALUES ('MARKUP LANGUAGES', 1)";
+        int rowsAffected = statement.executeUpdate(insertSQL);
+
+        System.out.println("Rows affected: " + rowsAffected);*/
+
         rs.close();
         con.close();
     }
