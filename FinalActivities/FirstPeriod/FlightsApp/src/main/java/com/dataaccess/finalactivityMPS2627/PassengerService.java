@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PassengerService {
-    public static void main(String filename) {
+    public static void addPassenger(String filename) {
 
         File file = new File(filename);
 

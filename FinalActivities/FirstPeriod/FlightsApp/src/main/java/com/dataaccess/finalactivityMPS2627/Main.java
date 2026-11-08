@@ -21,9 +21,17 @@ public class Main {
                     System.out.println("Error: You must provide an XML file.\n");
                     showHelp();
                 } else {
-                    PassengerService.main(args[1]);
+                    PassengerService.addPassenger(args[1]);
                 }
                 break;
+            case "-f":
+                case "--flights":
+                    if (args.length < 3) {
+                        System.out.println("Error: You must provide all information: customer id, flight id and date. \n");
+                        showHelp();
+                    }else{
+                        FlightService.searchFlights(args[3]);
+                    }
 
             default:
                 System.out.println("Error: Unknown option \n");
