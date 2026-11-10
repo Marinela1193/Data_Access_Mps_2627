@@ -30,7 +30,7 @@ public class Main {
                         System.out.println("Error: You must provide all information: customer id, flight id and date. \n");
                         showHelp();
                     }else{
-                        FlightService.searchFlights(args[3]);
+                        FlightService.searchFlights(args[1], args[2], args[3]);
                     }
 
             default:
