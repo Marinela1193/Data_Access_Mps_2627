@@ -25,14 +25,21 @@ public class Main {
                 }
                 break;
             case "-f":
-                case "--flights":
-                    if (args.length < 3) {
-                        System.out.println("Error: You must provide all information: customer id, flight id and date. \n");
-                        showHelp();
-                    }else{
-                        FlightService.searchFlights(args[1], args[2], args[3]);
-                    }
-
+            case "--flights":
+                if (args.length < 3) {
+                    System.out.println("Error: You must provide all information: flight origin, destination and date. \n");
+                    showHelp();
+                }else{
+                    FlightService.searchFlights(args[1], args[2], args[3]);
+                }
+            case "-b":
+            case "--buy":
+                if (args.length < 3) {
+                    System.out.println("Error: You must provide all information: customer id, flight id and date. \n");
+                    showHelp();
+                }else{
+                    TicketsService.buyTickets(args[1], args[2], args[3]);
+                }
             default:
                 System.out.println("Error: Unknown option \n");
                 showHelp();
