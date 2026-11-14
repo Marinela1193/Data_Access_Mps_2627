@@ -26,20 +26,28 @@ public class Main {
                 break;
             case "-f":
             case "--flights":
-                if (args.length < 3) {
+                if (args.length < 4) {
                     System.out.println("Error: You must provide all information: flight origin, destination and date. \n");
                     showHelp();
                 }else{
                     FlightService.searchFlights(args[1], args[2], args[3]);
                 }
+                break;
             case "-b":
             case "--buy":
-                if (args.length < 3) {
+                if (args.length < 4) {
                     System.out.println("Error: You must provide all information: customer id, flight id and date. \n");
                     showHelp();
-                }else{
+                }else {
                     TicketsService.buyTickets(args[1], args[2], args[3]);
                 }
+                break;
+            case "-o":
+            case "--origins":
+                break;
+            case "-d":
+            case "--destinations":
+                break;
             default:
                 System.out.println("Error: Unknown option \n");
                 showHelp();
