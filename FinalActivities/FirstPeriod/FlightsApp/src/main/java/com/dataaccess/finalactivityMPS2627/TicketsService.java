@@ -1,14 +1,13 @@
 package com.dataaccess.finalactivityMPS2627;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class TicketsService {
     public static void buyTickets(String customer_id, String flight_id, String date) {
 
-        if (customer_id == null || flight_id == null || date == null || date.trim().isEmpty()) {
+        if (customer_id == null || customer_id.trim().isEmpty() ||
+                flight_id == null || flight_id.trim().isEmpty() ||
+                date == null || date.trim().isEmpty()) {
             System.out.println("Customer id, the flight id and the date is empty, it must be filled.");
             LoggerService.log("Customer id, the flight id and the date is empty, it must be filled.");
             return;
@@ -16,21 +15,24 @@ public class TicketsService {
 
             String sqlCheckPassenger = "SELECT t.ticket_number " +
                     "FROM tickets t " +
-                    "WHERE t.passportno = ? AND t.date_of_travel = ?";
+                    "WHERE t.passportno = ? AND t.date_of_travel = ? " +
+                    "AND t.date_of_cancellation IS NULL";
 
             String sqlTotalSeats = "SELECT p.total_seats FROM flights f " +
                     "INNER JOIN planes p ON f.plane = p.plane_id " +
                     "WHERE f.flight_code = ?";
 
-            String sqlSoldTickets = "SELECT COUNT (*) AS sold_tickets FROM tickets t" +
-                    "WHERE t.date_of_travel = ? AND t.date_of_travel = ? " +
+            String sqlSoldTickets = "SELECT COUNT (*) AS sold_tickets FROM tickets t " +
+                    "WHERE t.flight_id = ? AND t.date_of_travel = ? " +
                     "AND t.date_of_cancellation IS NULL";
 
 
             try (Connection conn = ConnectionManager.getConnection()) {
+                Date travelDate = Date.valueOf(date);
+
                 try (PreparedStatement psmt = conn.prepareStatement(sqlCheckPassenger)) {
                     psmt.setString(1, customer_id);
-                    psmt.setString(2, date);
+                    psmt.setString(2, String.valueOf(travelDate));
 
                     try (ResultSet rs = psmt.executeQuery()) {
 
@@ -53,6 +55,7 @@ public class TicketsService {
                         } else {
                             System.out.println("Error: Flight " + flight_id + " does not exist.");
                             LoggerService.log("Error: Flight " + flight_id + " does not exist.");
+                            return;
                         }
                     }
                 } catch (SQLException e) {
@@ -63,13 +66,15 @@ public class TicketsService {
 
                 try (PreparedStatement psTickets = conn.prepareStatement(sqlSoldTickets)) {
                     psTickets.setString(1, flight_id);
+                    psTickets.setString(2, String.valueOf(travelDate));
 
                     try (ResultSet rsTickets = psTickets.executeQuery()) {
                         if (rsTickets.next()) {
-                            soldTickets = rsTickets.getInt("sold");
+                            soldTickets = rsTickets.getInt("sold_tickets");
                         } else {
                             System.out.println("Error: Flight " + flight_id + " does not exist.");
                             LoggerService.log("Error: Flight " + flight_id + " does not exist.");
+                            return;
                         }
                     }
 
@@ -86,10 +91,12 @@ public class TicketsService {
                     //we sell the ticket
                     String sqlSellTicket = "INSERT INTO tickets (passportno, flight_code, date_of_booking, date_of_travel ) VALUES (?, ?, CURRENT_DATE, ?)";
 
+                    conn.setAutoCommit(false);
+
                     try(PreparedStatement psSellTicket = conn.prepareStatement(sqlSellTicket)) {
                         psSellTicket.setString(1, customer_id);
                         psSellTicket.setString(2, flight_id);
-                        psSellTicket.setString(3, date);
+                        psSellTicket.setString(3, String.valueOf(travelDate));
 
                         int rowsAffected = psSellTicket.executeUpdate();
 
