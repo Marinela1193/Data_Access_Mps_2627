@@ -3,14 +3,13 @@ package com.dataaccess.finalactivityMPS2627;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class ConnectionManager {
 
     static Connection connection = null;
 
     public static synchronized Connection getConnection() throws SQLException, ClassNotFoundException {
-        if (connection == null) {
+        if (connection == null || connection.isClosed()) {
 
 
             Class.forName("org.postgresql.Driver");
