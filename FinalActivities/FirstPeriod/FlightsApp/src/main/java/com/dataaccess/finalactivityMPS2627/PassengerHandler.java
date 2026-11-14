@@ -23,7 +23,7 @@ public class PassengerHandler extends DefaultHandler {
     {
         elementValue.setLength(0);
 
-        if (qName.equalsIgnoreCase("passenger") || qName.equalsIgnoreCase("customer")) {
+        if (qName.equalsIgnoreCase("passenger")) {
             currentPassenger = new Passenger();
 
             String attrPassport = attributes.getValue("passportno");
@@ -53,10 +53,10 @@ public class PassengerHandler extends DefaultHandler {
                 currentPassenger.setAddress(content);
             }else if(qName.equalsIgnoreCase("phone")) {
                 currentPassenger.setPhone(content);
+            }else if (qName.equalsIgnoreCase("passenger")) {
+                passengers.add(currentPassenger);
+                currentPassenger = null;
             }
-
-            passengers.add(currentPassenger);
-            currentPassenger = null;
         }
     }
 }
