@@ -44,6 +44,12 @@ public class Main {
                 break;
             case "-o":
             case "--origins":
+                if(args.length > 1) {
+                    System.out.println("Error: We do not expect any parameter written \n");
+                    showHelp();
+                }else{
+                    FlightService.searchOrigins();
+                }
                 break;
             case "-d":
             case "--destinations":
