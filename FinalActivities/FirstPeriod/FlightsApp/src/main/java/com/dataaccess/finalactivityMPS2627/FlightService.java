@@ -1,6 +1,7 @@
 package com.dataaccess.finalactivityMPS2627;
 
 import java.sql.*;
+import java.util.logging.Logger;
 
 public class FlightService {
     public static void searchFlights(String origin, String destination, String date) {
@@ -53,6 +54,32 @@ public class FlightService {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+    }
+
+    public static void searchOrigins(){
+        try{
+            String sql = "SELECT DISTINCT a.iata FROM flights f " +
+            "INNER JOIN airports a ON f.destination = a.code";
+
+            try(Connection conn = ConnectionManager.getConnection()) {
+                try(PreparedStatement pstm = conn.prepareStatement(sql)) {
+                  try(ResultSet rs = pstm.executeQuery()) {
+
+                      if(rs.wasNull()) {
+                          System.out.println("There are no destinations in the data base");
+                          LoggerService.log("There are no destinations in the data base");
+                      }else {
+                          while (rs.next()) {
+                              System.out.println("Origin: " + rs.getString(1));
+                          }
+                      }
+                  }
+                }
+            }
+        }catch(Exception e){
+            LoggerService.log("Error in searchOrigins");
         }
 
     }
