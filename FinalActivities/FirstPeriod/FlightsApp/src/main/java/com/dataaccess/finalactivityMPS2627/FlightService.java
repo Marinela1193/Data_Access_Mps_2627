@@ -83,4 +83,37 @@ public class FlightService {
         }
 
     }
+
+    public static void showDestinations(String destination) {
+        if(destination == null || destination.trim().isEmpty()){
+            System.out.println("Destination is empty");
+            LoggerService.log("Destination is empty");
+        }
+        else{
+            String sql = "SELECT DISTINCT a.name FROM airports a " +
+                    "INNER JOIN flights f ON f.source = a.code " +
+                    "WHERE a.iata = ?";
+
+            try(Connection conn = ConnectionManager.getConnection();
+                PreparedStatement pstm = conn.prepareStatement(sql)) {
+                pstm.setString(1, destination.toUpperCase());
+                try(ResultSet rs = pstm.executeQuery()) {
+                    if(rs.wasNull()) {
+                        System.out.println("There are no destinations in the data base");
+                        LoggerService.log("There are no destinations in the data base");
+                    }else{
+                        while(rs.next()) {
+                            System.out.println("Destination: " + rs.getString(1));
+                        }
+                    }
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
 }
