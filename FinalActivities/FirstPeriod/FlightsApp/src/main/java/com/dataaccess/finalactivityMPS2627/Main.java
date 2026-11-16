@@ -53,6 +53,12 @@ public class Main {
                 break;
             case "-d":
             case "--destinations":
+                if(args.length > 2) {
+                    System.out.println("Error: you need to write the destination \n");
+                    showHelp();
+                }else{
+                    FlightService.showDestinations(args[1]);
+                }
                 break;
             default:
                 System.out.println("Error: Unknown option \n");
