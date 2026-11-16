@@ -60,8 +60,8 @@ public class FlightService {
 
     public static void searchOrigins(){
         try{
-            String sql = "SELECT DISTINCT a.iata FROM flights f " +
-            "INNER JOIN airports a ON f.destination = a.code";
+            String sql = "SELECT DISTINCT a.name FROM flights f " +
+            "INNER JOIN airports a ON f.source = a.code";
 
             try(Connection conn = ConnectionManager.getConnection()) {
                 try(PreparedStatement pstm = conn.prepareStatement(sql)) {
