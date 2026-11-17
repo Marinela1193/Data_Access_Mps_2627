@@ -60,7 +60,7 @@ public class FlightService {
 
             } catch (SQLException | ClassNotFoundException e) {
                 System.out.println("Database error: " + e.getMessage());
-                LoggerService.log("Error in searchFlights: " + e.getMessage());
+                LoggerService.log(" Error in searchFlights: " + e.getMessage());
             }
         }
     }
