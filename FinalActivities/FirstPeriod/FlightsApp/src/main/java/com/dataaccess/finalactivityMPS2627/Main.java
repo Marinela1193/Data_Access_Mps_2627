@@ -17,7 +17,7 @@ public class Main {
 
             case "-a":
             case "--add":
-                if (args.length < 2) {
+                if (args.length != 2) {
                     System.out.println("Error: You must provide an XML file.\n");
                     showHelp();
                 } else {
@@ -26,7 +26,7 @@ public class Main {
                 break;
             case "-f":
             case "--flights":
-                if (args.length < 4) {
+                if (args.length != 4) {
                     System.out.println("Error: You must provide all information: flight origin, destination and date. \n");
                     showHelp();
                 }else{
@@ -35,7 +35,7 @@ public class Main {
                 break;
             case "-b":
             case "--buy":
-                if (args.length < 4) {
+                if (args.length != 4) {
                     System.out.println("Error: You must provide all information: customer id, flight id and date. \n");
                     showHelp();
                 }else {
@@ -53,7 +53,7 @@ public class Main {
                 break;
             case "-d":
             case "--destinations":
-                if(args.length > 2) {
+                if(args.length != 2) {
                     System.out.println("Error: you need to write the destination \n");
                     showHelp();
                 }else{
