@@ -1,4 +1,4 @@
-package com.dataaccess.finalactivityMPS2627;
+package com.dataaccess.finalactivityMPS2627.util;
 
 import java.io.IOException;
 import java.io.InputStream;

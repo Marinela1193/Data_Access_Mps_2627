@@ -1,5 +1,9 @@
 package com.dataaccess.finalactivityMPS2627;
 
+import com.dataaccess.finalactivityMPS2627.service.FlightService;
+import com.dataaccess.finalactivityMPS2627.service.PassengerService;
+import com.dataaccess.finalactivityMPS2627.service.TicketsService;
+
 public class Main {
     public static void main(String[] args) {
         if (args.length == 0) {

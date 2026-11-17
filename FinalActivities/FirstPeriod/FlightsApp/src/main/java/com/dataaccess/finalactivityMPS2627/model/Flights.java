@@ -1,6 +1,4 @@
-package com.dataaccess.finalactivityMPS2627;
-
-import java.util.List;
+package com.dataaccess.finalactivityMPS2627.model;
 
 public class Flights {
 

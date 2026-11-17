@@ -1,4 +1,6 @@
-package com.dataaccess.finalactivityMPS2627;
+package com.dataaccess.finalactivityMPS2627.service;
+
+import com.dataaccess.finalactivityMPS2627.util.ConnectionManager;
 
 import java.sql.*;
 import java.sql.Date;

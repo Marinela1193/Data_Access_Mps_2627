@@ -1,6 +1,7 @@
-package com.dataaccess.finalactivityMPS2627;
+package com.dataaccess.finalactivityMPS2627.util;
 
 
+import com.dataaccess.finalactivityMPS2627.model.Passenger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

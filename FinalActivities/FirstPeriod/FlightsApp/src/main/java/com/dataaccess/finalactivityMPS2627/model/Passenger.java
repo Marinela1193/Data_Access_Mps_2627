@@ -1,4 +1,4 @@
-package com.dataaccess.finalactivityMPS2627;
+package com.dataaccess.finalactivityMPS2627.model;
 
 public class Passenger {
     private String passportNo;

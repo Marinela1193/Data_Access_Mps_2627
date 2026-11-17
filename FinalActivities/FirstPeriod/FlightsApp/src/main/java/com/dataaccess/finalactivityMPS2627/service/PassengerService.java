@@ -1,4 +1,8 @@
-package com.dataaccess.finalactivityMPS2627;
+package com.dataaccess.finalactivityMPS2627.service;
+
+import com.dataaccess.finalactivityMPS2627.util.ConnectionManager;
+import com.dataaccess.finalactivityMPS2627.util.PassengerHandler;
+import com.dataaccess.finalactivityMPS2627.model.Passenger;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;

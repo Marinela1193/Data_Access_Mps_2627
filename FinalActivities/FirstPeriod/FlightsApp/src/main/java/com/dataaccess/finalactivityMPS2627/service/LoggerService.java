@@ -1,4 +1,4 @@
-package com.dataaccess.finalactivityMPS2627;
+package com.dataaccess.finalactivityMPS2627.service;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

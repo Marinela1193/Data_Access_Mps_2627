@@ -1,7 +1,8 @@
-package com.dataaccess.finalactivityMPS2627;
+package com.dataaccess.finalactivityMPS2627.service;
+
+import com.dataaccess.finalactivityMPS2627.util.ConnectionManager;
 
 import java.sql.*;
-import java.util.logging.Logger;
 
 public class FlightService {
     public static void searchFlights(String origin, String destination, String date) {
