@@ -12,12 +12,12 @@ public class FlightService {
             System.out.println("Origin or Destination or Date is empty");
             LoggerService.log("Origin or Destination or Date is empty");
             return;
-        }else {
+        } else {
 
             Date travelDate;
-            try{
+            try {
                 travelDate = Date.valueOf(date.trim());
-            }catch(IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 System.out.println("Error: Invalid date format. Expected YYYY-MM-DD.");
                 LoggerService.log("Invalid date format in searchFlights: " + date);
                 return;
@@ -26,12 +26,12 @@ public class FlightService {
             String sql = "SELECT * FROM fn_showflights_mps(?, ?, ?)";
 
             try (Connection conn = ConnectionManager.getConnection()) {
-                try(PreparedStatement pstm = conn.prepareStatement(sql)) {
+                try (PreparedStatement pstm = conn.prepareStatement(sql)) {
                     pstm.setString(1, origin.toUpperCase());
                     pstm.setString(2, destination.toUpperCase());
                     pstm.setDate(3, travelDate);
 
-                    try(ResultSet rs = pstm.executeQuery()) {
+                    try (ResultSet rs = pstm.executeQuery()) {
                         boolean found = false;
 
                         while (rs.next()) {
@@ -51,8 +51,7 @@ public class FlightService {
                         }
                         if (!found) {
                             System.out.println("No flights found for " + origin + " -> " + destination + " on " + date);
-                        }
-                        else {
+                        } else {
                             LoggerService.log("Success searchFlights");
                         }
                     }
@@ -60,67 +59,74 @@ public class FlightService {
 
             } catch (SQLException | ClassNotFoundException e) {
                 System.out.println("Database error: " + e.getMessage());
-                LoggerService.log(" Error in searchFlights: " + e.getMessage());
+                LoggerService.log("Error in searchFlights: " + e.getMessage());
             }
         }
     }
 
-    public static void searchOrigins(){
-        try{
-            String sql = "SELECT DISTINCT a.name FROM flights f " +
-            "INNER JOIN airports a ON f.source = a.code";
+    public static void searchOrigins() {
+        try {
+            String sql = "SELECT DISTINCT a.code, a.iata, a.name FROM flights f " +
+                    "INNER JOIN airports a ON f.source = a.code " +
+                    "ORDER BY a.name";
+            ;
 
-            try(Connection conn = ConnectionManager.getConnection()) {
-                try(PreparedStatement pstm = conn.prepareStatement(sql)) {
-                  try(ResultSet rs = pstm.executeQuery()) {
+            try (Connection conn = ConnectionManager.getConnection();
+                 PreparedStatement pstm = conn.prepareStatement(sql);
+                 ResultSet rs = pstm.executeQuery()) {
 
-                      if(rs.wasNull()) {
-                          System.out.println("There are no destinations in the data base");
-                          LoggerService.log("There are no destinations in the data base");
-                      }else {
-                          while (rs.next()) {
-                              System.out.println("Origin: " + rs.getString(1));
-                          }
-                      }
-                  }
+                boolean found = false;
+                while (rs.next()) {
+                    found = true;
+                    System.out.println(rs.getString("iata") + " - " + rs.getString("name"));
                 }
+                if (!found) {
+                    System.out.println("There are no origins in the database");
+                    LoggerService.log("There are no origins in the database");
+                } else {
+                    System.out.println("Success searchOrigins");
+                }
+
             }
-        }catch(Exception e){
-            LoggerService.log("Error in searchOrigins");
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println("Database error: " + e.getMessage());
+            LoggerService.log("Error in searchOrigins: " + e.getMessage());
         }
 
     }
 
-    public static void showDestinations(String destination) {
-        if(destination == null || destination.trim().isEmpty()){
-            System.out.println("Destination is empty");
-            LoggerService.log("Destination is empty");
-        }
-        else{
-            String sql = "SELECT DISTINCT a_dest.name " +
+    public static void showDestinations(String origin) {
+        if (origin == null || origin.trim().isEmpty()) {
+            System.out.println("Origin airport is empty");
+            LoggerService.log("Origin airport is empty");
+        } else {
+            String sql = "SELECT DISTINCT a_dest.code, a_dest.iata, a_dest.name " +
                     "FROM flights f " +
                     "INNER JOIN airports a_orig ON f.source = a_orig.code " +
                     "INNER JOIN airports a_dest ON f.destination = a_dest.code " +
                     "WHERE a_orig.iata = ?";
 
-            try(Connection conn = ConnectionManager.getConnection();
-                PreparedStatement pstm = conn.prepareStatement(sql)) {
-                pstm.setString(1, destination.toUpperCase());
-                try(ResultSet rs = pstm.executeQuery()) {
-                    if(rs.wasNull()) {
-                        System.out.println("There are no destinations in the data base");
-                        LoggerService.log("There are no destinations in the data base");
-                    }else{
-                        while(rs.next()) {
-                            System.out.println("Destination: " + rs.getString(1));
-                        }
+            try (Connection conn = ConnectionManager.getConnection();
+                 PreparedStatement pstm = conn.prepareStatement(sql)) {
+                pstm.setString(1, origin.toUpperCase());
+                try (ResultSet rs = pstm.executeQuery()) {
+                    boolean found = false;
+
+                    while (rs.next()) {
+                        found = true;
+                        System.out.println(rs.getString("iata") + " - " + rs.getString("name"));
+                    }
+                    if (!found) {
+                        System.out.println("No destinations found from origin: " + origin);
+                        LoggerService.log("No destinations found from origin: " + origin);
+                    } else {
+                        LoggerService.log("Success showDestinations for origin: " + origin);
                     }
                 }
 
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            } catch (SQLException | ClassNotFoundException e) {
+                System.out.println("Database error: " + e.getMessage());
+                LoggerService.log("Error in showDestinations: " + e.getMessage());
             }
         }
     }
