@@ -14,13 +14,22 @@ public class FlightService {
             return;
         }else {
 
+            Date travelDate;
+            try{
+                travelDate = Date.valueOf(date.trim());
+            }catch(IllegalArgumentException e){
+                System.out.println("Error: Invalid date format. Expected YYYY-MM-DD.");
+                LoggerService.log("Invalid date format in searchFlights: " + date);
+                return;
+            }
+
             String sql = "SELECT * FROM fn_showflights_mps(?, ?, ?)";
 
             try (Connection conn = ConnectionManager.getConnection()) {
                 try(PreparedStatement pstm = conn.prepareStatement(sql)) {
                     pstm.setString(1, origin.toUpperCase());
                     pstm.setString(2, destination.toUpperCase());
-                    pstm.setDate(3, Date.valueOf(date));
+                    pstm.setDate(3, travelDate);
 
                     try(ResultSet rs = pstm.executeQuery()) {
                         boolean found = false;
@@ -49,13 +58,11 @@ public class FlightService {
                     }
                 }
 
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            } catch (SQLException | ClassNotFoundException e) {
+                System.out.println("Database error: " + e.getMessage());
+                LoggerService.log("Error in searchFlights: " + e.getMessage());
             }
         }
-
     }
 
     public static void searchOrigins(){
@@ -90,9 +97,11 @@ public class FlightService {
             LoggerService.log("Destination is empty");
         }
         else{
-            String sql = "SELECT DISTINCT a.name FROM airports a " +
-                    "INNER JOIN flights f ON f.source = a.code " +
-                    "WHERE a.iata = ?";
+            String sql = "SELECT DISTINCT a_dest.name " +
+                    "FROM flights f " +
+                    "INNER JOIN airports a_orig ON f.source = a_orig.code " +
+                    "INNER JOIN airports a_dest ON f.destination = a_dest.code " +
+                    "WHERE a_orig.iata = ?";
 
             try(Connection conn = ConnectionManager.getConnection();
                 PreparedStatement pstm = conn.prepareStatement(sql)) {
