@@ -17,7 +17,7 @@ public class ConnectionManager {
 
             Properties properties = new Properties();
             try {
-                InputStream propertiesStream = ClassLoader.getSystemResourceAsStream("db.properties");
+                InputStream propertiesStream = ClassLoader.getSystemResourceAsStream("database.properties");
                 if (propertiesStream != null) {
                     properties.load(propertiesStream);
                     propertiesStream.close();
@@ -26,10 +26,11 @@ public class ConnectionManager {
                 throw new RuntimeException("Error leyendo db.properties: " + e.getMessage());
             }
 
-            String url = "jdbc:postgresql://localhost:5432/flights2627";
-            String user = "postgres";
-            String password = "POSTGRES";
-            String schema = "public";
+            String url = properties.getProperty("db.url");
+            String user = properties.getProperty("db.user");
+            String password = properties.getProperty("db.password");
+            String schema = properties.getProperty("db.schema", "public");
+
             connection = DriverManager.getConnection(url, user, password);
             connection.setSchema(schema);
         }
