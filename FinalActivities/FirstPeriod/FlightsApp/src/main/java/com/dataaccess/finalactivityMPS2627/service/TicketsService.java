@@ -140,10 +140,9 @@ public class TicketsService {
                 }
             }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println("Database error: " + e.getMessage());
+            LoggerService.log("Database error in buyTickets: " + e.getMessage());
         }
     }
 
