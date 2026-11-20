@@ -1,7 +1,7 @@
 package com.dataaccess.finalactivityMPS2627.service;
 
 import com.dataaccess.finalactivityMPS2627.util.ConnectionManager;
-import com.dataaccess.finalactivityMPS2627.util.validationClass;
+import com.dataaccess.finalactivityMPS2627.util.ValidationClass;
 
 import java.sql.*;
 import java.sql.Date;
@@ -10,26 +10,26 @@ import java.time.LocalDate;
 public class TicketsService {
     public static void buyTickets(String customer_id, String flight_code, String date) {
 
-        if (!validationClass.validCustomerId(customer_id)) {
+        if (!ValidationClass.validCustomerId(customer_id)) {
             System.out.println("Customer id, the flight id and the date is empty, it must be filled.");
             LoggerService.log("Customer id, the flight id and the date is empty, it must be filled.");
             return;
         }
 
-        if (!validationClass.validFlightCode(flight_code)) {
+        if (!ValidationClass.validFlightCode(flight_code)) {
             System.out.println("Flight code, the flight code is empty, it must be filled.");
             LoggerService.log("Flight code, the flight code is empty, it must be filled.");
             return;
         }
 
-        LocalDate localDate = validationClass.correctDate(date);
+        LocalDate localDate = ValidationClass.correctDate(date);
         if (localDate == null) {
             System.out.println("Error: invalid date format. Expected YYYY-MM-DD format.");
             LoggerService.log("Invalid date format. Expected YYYY-MM-DD format.");
             return;
         }
 
-        if (validationClass.pastDate(localDate)) {
+        if (ValidationClass.pastDate(localDate)) {
             System.out.println("Error: You cannot buy a ticket for an already past date");
             LoggerService.log("You cannot buy a ticket for an already past date");
             return;

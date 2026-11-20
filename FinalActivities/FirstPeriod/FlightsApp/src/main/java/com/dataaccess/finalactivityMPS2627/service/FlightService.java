@@ -1,7 +1,7 @@
 package com.dataaccess.finalactivityMPS2627.service;
 
 import com.dataaccess.finalactivityMPS2627.util.ConnectionManager;
-import com.dataaccess.finalactivityMPS2627.util.validationClass;
+import com.dataaccess.finalactivityMPS2627.util.ValidationClass;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -9,13 +9,13 @@ import java.time.LocalDate;
 public class FlightService {
     public static void searchFlights(String origin, String destination, String date) {
 
-        if (!validationClass.validIata(origin) || !validationClass.validIata(destination)) {
+        if (!ValidationClass.validIata(origin) || !ValidationClass.validIata(destination)) {
             System.out.println("Error: Origin or Destination are not valid 3-letter code should be written");
             LoggerService.log("Error: Origin or Destination are not valid 3-letter code should be written");
             return;
         }
 
-        LocalDate localDate = validationClass.correctDate(date);
+        LocalDate localDate = ValidationClass.correctDate(date);
         if (localDate == null) {
             System.out.println("Error: invalid date format. Expected YYYY-MM-DD format.");
             LoggerService.log("Error: invalid date format. Expected YYYY-MM-DD format.");
@@ -91,7 +91,7 @@ public class FlightService {
     }
 
     public static void showDestinations(String origin) {
-        if (!validationClass.validIata(origin)) {
+        if (!ValidationClass.validIata(origin)) {
             System.out.println("Error: Origin must be a valid 3-letter IATA code.");
             LoggerService.log("Error: invalid IATA code in showDestinations: " + origin);
             return;

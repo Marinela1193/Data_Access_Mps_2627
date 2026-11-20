@@ -3,7 +3,7 @@ package com.dataaccess.finalactivityMPS2627.util;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class validationClass {
+public class ValidationClass {
 
     private static final String IATA_REGEX = "^[A-Za-z]{3}$";
     private static final String FLIGHT_CODE_REGEX = "^[A-Za-z0-9]{2,10}$";
