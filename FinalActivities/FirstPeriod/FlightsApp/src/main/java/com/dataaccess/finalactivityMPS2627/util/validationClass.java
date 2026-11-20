@@ -7,7 +7,7 @@ public class validationClass {
 
     private static final String IATA_REGEX = "^[A-Za-z]{3}$";
     private static final String FLIGHT_CODE_REGEX = "^[A-Za-z0-9]{2,10}$";
-    private static final String PASSENGER_ID_REGEX = "^[A-Za-z0-9]{1,10}$";
+    private static final String CUSTOMER_ID_REGEX = "^[A-Za-z0-9]{1,10}$";
 
     public static boolean validIata(String iata) {
         return iata != null && iata.trim().matches(IATA_REGEX);
@@ -17,8 +17,8 @@ public class validationClass {
         return flightCode != null && flightCode.trim().matches(FLIGHT_CODE_REGEX);
     }
 
-    public static boolean validPassengerId(String customerId) {
-        return customerId != null && customerId.trim().matches(PASSENGER_ID_REGEX);
+    public static boolean validCustomerId(String customerId) {
+        return customerId != null && customerId.trim().matches(CUSTOMER_ID_REGEX);
     }
 
     public static LocalDate correctDate(String date) {
