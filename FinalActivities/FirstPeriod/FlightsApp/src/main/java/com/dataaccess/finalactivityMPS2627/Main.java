@@ -1,8 +1,11 @@
 package com.dataaccess.finalactivityMPS2627;
 
 import com.dataaccess.finalactivityMPS2627.service.FlightService;
+import com.dataaccess.finalactivityMPS2627.service.LoggerService;
 import com.dataaccess.finalactivityMPS2627.service.PassengerService;
 import com.dataaccess.finalactivityMPS2627.service.TicketsService;
+
+import java.util.logging.Logger;
 
 public class Main {
 
@@ -38,6 +41,7 @@ public class Main {
             case ADD_LONG:
                 if (args.length != 2) {
                     System.out.println("Error: You must provide an XML file.\n");
+                    LoggerService.log("Error: You must provide an XML file.");
                     showHelp();
                 } else {
                     PassengerService.addPassenger(args[1]);
@@ -47,6 +51,7 @@ public class Main {
             case FLIGHTS_LONG:
                 if (args.length != 4) {
                     System.out.println("Error: You must provide all information: flight origin, destination and date. \n");
+                    LoggerService.log("Error: You must provide all information: flight origin, destination and date.");
                     showHelp();
                 }else{
                     FlightService.searchFlights(args[1], args[2], args[3]);
@@ -56,6 +61,7 @@ public class Main {
             case BUY_LONG:
                 if (args.length != 4) {
                     System.out.println("Error: You must provide all information: customer id, flight id and date. \n");
+                    LoggerService.log("Error: You must provide all information: customer id, flight id and date.");
                     showHelp();
                 }else {
                     TicketsService.buyTickets(args[1], args[2], args[3]);
@@ -65,6 +71,7 @@ public class Main {
             case ORIGINS_LONG:
                 if(args.length > 1) {
                     System.out.println("Error: We do not expect any parameter written \n");
+                    LoggerService.log("Error: We do not expect any parameter written.");
                     showHelp();
                 }else{
                     FlightService.searchOrigins();
@@ -74,6 +81,7 @@ public class Main {
             case DESTINATION_LONG:
                 if(args.length != 2) {
                     System.out.println("Error: you need to write the origin \n");
+                    LoggerService.log("Error: you need to write the destination");
                     showHelp();
                 }else{
                     FlightService.showDestinations(args[1]);
@@ -81,6 +89,7 @@ public class Main {
                 break;
             default:
                 System.out.println("Error: Unknown option \n");
+                LoggerService.log("Error: Unknown option.");
                 showHelp();
                 break;
         }
