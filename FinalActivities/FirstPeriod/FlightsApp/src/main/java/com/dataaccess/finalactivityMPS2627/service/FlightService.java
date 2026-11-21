@@ -22,15 +22,15 @@ public class FlightService {
             return;
         }
 
-        String sql = "SELECT * FROM fn_showflights_mps(?, ?, ?)";
+        String sql = "{call fn_showflights_mps(?, ?, ?)}";
 
         try (Connection conn = ConnectionManager.getConnection();
-             PreparedStatement pstm = conn.prepareStatement(sql)) {
-            pstm.setString(1, origin.toUpperCase());
-            pstm.setString(2, destination.toUpperCase());
-            pstm.setDate(3, Date.valueOf(localDate));
+             CallableStatement cstm = conn.prepareCall(sql)) {
+            cstm.setString(1, origin.toUpperCase());
+            cstm.setString(2, destination.toUpperCase());
+            cstm.setDate(3, Date.valueOf(localDate));
 
-            try (ResultSet rs = pstm.executeQuery()) {
+            try (ResultSet rs = cstm.executeQuery()) {
                 boolean found = false;
 
                 while (rs.next()) {
