@@ -1,12 +1,14 @@
 package com.dataaccess.finalactivityMPS2627.model;
 
+import java.time.LocalTime;
+
 public class Flights {
 
     private String flightCode;
     private int source;
     private int destination;
-    private String departureTime;
-    private String arrivalTime;
+    private LocalTime departureTime;
+    private LocalTime arrivalTime;
     private int duration;
     private int airlineId;
     private int distance;
@@ -15,7 +17,7 @@ public class Flights {
     public Flights() {
     }
 
-    public Flights(String flightCode, int source, int destination, String departureTime, String arrivalTime, int duration, int airlineId, int distance, int plane) {
+    public Flights(String flightCode, int source, int destination, LocalTime departureTime, LocalTime arrivalTime, int duration, int airlineId, int distance, int plane) {
         this.flightCode = flightCode;
         this.source = source;
         this.destination = destination;
@@ -51,19 +53,19 @@ public class Flights {
         this.destination = destination;
     }
 
-    public String getDepartureTime() {
+    public LocalTime getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(String departureTime) {
+    public void setDepartureTime(LocalTime departureTime) {
         this.departureTime = departureTime;
     }
 
-    public String getArrivalTime() {
+    public LocalTime getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(String arrivalTime) {
+    public void setArrivalTime(LocalTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 
