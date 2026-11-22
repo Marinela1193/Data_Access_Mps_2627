@@ -1,0 +1,391 @@
+CONTRASEÑA fS1k6e57
+
+flights2627
+
+SQL
+
+SELECT flight_code, duration FROM flights WHERE duration > 500 ORDER BY duration DESC;
+
+SELECT t.ticket_number, p.firstname FROM tickets t INNER JOIN passengers p ON t.passportno = p.passportno;
+
+SELECT * FROM tickets WHERE date_of_cancellation IS NULL;
+
+INSERT INTO airlines (name, shortcode) VALUES (?, ?);
+
+UPDATE passengers SET phone = ? WHERE passportno = ?;
+
+DELETE FROM tickets WHERE ticket_number = ?;
+
+SELECT COALESCE(SUM(price), 0) FROM tickets WHERE flight_code = ? AND date_of_cancellation IS NULL;
+
+SELECT flight_code, COUNT(*) FROM tickets GROUP BY flight_code;
+
+ALTER TABLE passengers ADD COLUMN email varchar(50);
+
+CREATE OR REPLACE FUNCTION fn_x(p_code varchar) RETURNS integer LANGUAGE 'plpgsql' AS $BODY$ DECLARE v integer; BEGIN SELECT COUNT(*) INTO v FROM tickets WHERE flight_code = p_code; RETURN v; END; $BODY$;
+
+CREATE OR REPLACE FUNCTION fn_y(p_name varchar) RETURNS TABLE(c1 varchar, c2 int) LANGUAGE 'plpgsql' AS $BODY$ BEGIN RETURN QUERY SELECT f.flight_code, f.duration FROM flights f INNER JOIN airlines a ON f.airlineid = a.airlineid WHERE a.name = p_name; END; $BODY$;
+
+SELECT * FROM fn_y(?);
+
+FILE
+File f = new File(filename);
+if (!f.exists()) { return; }
+
+leer línea a linea
+
+try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+  String line;
+  while ((line = br.readLine()) != null) {
+    String[] data = line.split(";");
+  }
+}
+
+ESCRIBIR Y EXPORTAR
+
+try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(filename, false)))) {
+  pw.println("texto");
+}
+
+ESCRIBIR DE FORMA ACUMULATIVA TRUE
+
+PrintWriter + BufferedWriter + FileWriter	
+try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(filename, true)))) {
+
+
+  pw.println("nueva línea");
+
+
+}
+
+Convertir texto a fecha SQL
+
+java.sql.Date.valueOf("2026-12-15")
+
+
+Convertir args[] a número
+
+Integer.parseInt(args[1])
+
+
+Confirmación por consola
+
+Scanner sc = new Scanner(System.in);
+
+String resp = sc.nextLine().trim().toLowerCase();
+
+if (!resp.equals("y")) return;
+
+DEVOLVER LISTA DE OBJETOS
+
+Creamos una clase nueva: 
+
+public class FlightTicketDTO {
+
+  private String flightCode;
+
+  private String passengerName;
+
+  private double price;
+}
+
+Constructor	
+  public FlightTicketDTO(String flightCode, String passengerName, double price) {
+
+    this.flightCode = flightCode; this.passengerName = passengerName; this.price = price;
+
+  }
+
+Getters + toString()	
+  @Override public String toString() { return flightCode + " - " + passengerName + " (" + price + "€)"; }
+
+
+}
+
+Llenar lista desde ResultSet	
+List<FlightTicketDTO> list = new ArrayList<>();
+
+while (rs.next()) {
+
+  list.add(new FlightTicketDTO(rs.getString("flight_code"), rs.getString("firstname"), rs.getDouble("price")));
+
+}
+
+CODIGO DE FLIGHTSERVICE:
+public static List<FlightPassengerDTO> searchFlightPassengers(String targetFlightCode) {
+        List<FlightPassengerDTO> dtoList = new ArrayList<>();
+        
+        String sql = "SELECT f.flight_code, p.firstname, p.lastname, f.departure " +
+                     "FROM flights f " +
+                     "INNER JOIN tickets t ON f.flight_code = t.flight_code " +
+                     "INNER JOIN passengers p ON t.passportno = p.passportno " +
+                     "WHERE f.flight_code = ? AND t.date_of_cancellation IS NULL";
+
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement pstm = conn.prepareStatement(sql)) {
+
+            pstm.setString(1, targetFlightCode.trim().toUpperCase());
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                while (rs.next()) {
+                    String code = rs.getString("flight_code");
+                    String fullName = rs.getString("firstname") + " " + rs.getString("lastname");
+                    String depTime = rs.getString("departure");
+
+                    // Aquí creas el objeto DTO con los datos de la fila actual
+                    FlightPassengerDTO dto = new FlightPassengerDTO(code, fullName, depTime);
+                    
+                    // Y lo añadidas a tu lista
+                    dtoList.add(dto);
+                }
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println("Error en la consulta DTO: " + e.getMessage());
+            LoggerService.log("Error en searchFlightPassengers: " + e.getMessage());
+        }
+
+        return dtoList;
+    }
+
+BORRAR BILLETE CON FORCE O SIN FORCE
+
+case DELETE_SHORT: // "-del"
+case DELETE_LONG:  // "--delete"
+    if (args.length < 2 || args.length > 3) {
+        System.out.println("Error: Usage --delete <ticket_number> [--force]");
+        LoggerService.log("Error: Invalid arguments for delete.");
+        showHelp();
+        return;
+    }
+
+    try {
+        int ticketNumber = Integer.parseInt(args[1]);
+        boolean force = false;
+
+        // Si viene un 3º argumento, comprobamos si es --force
+        if (args.length == 3) {
+            if (args[2].equals("--force")) {
+                force = true;
+            } else {
+                System.out.println("Error: Unknown option " + args[2]);
+                return;
+            }
+        }
+
+        TicketService.deleteTicket(ticketNumber, force);
+
+    } catch (NumberFormatException e) {
+        System.out.println("Error: Ticket number must be an integer.");
+    }
+    break;
+
+public static void deleteTicket(int ticketNumber, boolean force) {
+    // 1. Si NO viene --force, pedimos confirmación por consola
+    if (!force) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Are you sure you want to delete ticket " + ticketNumber + "? (y/n): ");
+        String answer = sc.nextLine().trim().toLowerCase();
+
+        if (!answer.equals("y")) {
+            System.out.println("Operation cancelled.");
+            LoggerService.log("Delete cancelled by user for ticket " + ticketNumber);
+            return; // Cortamos aquí y ni siquiera tocamos la BD
+        }
+    }
+
+    // 2. Si venía --force o el usuario dijo "y", ejecutamos el DELETE
+    String sql = "DELETE FROM tickets WHERE ticket_number = ?";
+
+    try (Connection conn = ConnectionManager.getConnection();
+         PreparedStatement pst = conn.prepareStatement(sql)) {
+
+        pst.setInt(1, ticketNumber);
+        int rows = pst.executeUpdate();
+
+        if (rows > 0) {
+            System.out.println("Ticket " + ticketNumber + " deleted successfully.");
+            LoggerService.log("Ticket " + ticketNumber + " deleted.");
+        } else {
+            System.out.println("Error: Ticket " + ticketNumber + " not found.");
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error deleting ticket: " + e.getMessage());
+        LoggerService.log("Error deleting ticket: " + e.getMessage());
+    }
+}
+
+BORRAR PASAJERO
+public static void deletePassenger(String passportNo, boolean force) {
+    if (!force) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("This will delete passenger " + passportNo + " and ALL their tickets. Continue? (y/n): ");
+        String answer = sc.nextLine().trim().toLowerCase();
+        if (!answer.equals("y")) {
+            System.out.println("Operation cancelled.");
+            return;
+        }
+    }
+
+    String sqlDeleteTickets = "DELETE FROM tickets WHERE passportno = ?";
+    String sqlDeletePassenger = "DELETE FROM passengers WHERE passportno = ?";
+
+    try (Connection conn = ConnectionManager.getConnection();
+         PreparedStatement pstTickets = conn.prepareStatement(sqlDeleteTickets);
+         PreparedStatement pstPassenger = conn.prepareStatement(sqlDeletePassenger)) {
+
+        conn.setAutoCommit(false); // 1. Iniciamos transacción
+
+        try {
+            // 2. PRIMERO borramos los HIJOS (tickets)
+            pstTickets.setString(1, passportNo);
+            int ticketsDeleted = pstTickets.executeUpdate();
+
+            // 3. DESPUÉS borramos al PADRE (passenger)
+            pstPassenger.setString(1, passportNo);
+            int passengerDeleted = pstPassenger.executeUpdate();
+
+            if (passengerDeleted > 0) {
+                conn.commit(); // 4. Todo ok -> guardamos ambos borrados
+                System.out.println("Passenger deleted (along with " + ticketsDeleted + " tickets).");
+                LoggerService.log("Deleted passenger " + passportNo + " and " + ticketsDeleted + " tickets.");
+            } else {
+                conn.rollback(); // No existía ese pasajero
+                System.out.println("Error: Passenger " + passportNo + " not found.");
+            }
+
+        } catch (SQLException e) {
+            conn.rollback(); // Si falla algo, deshacemos todo
+            System.out.println("Error deleting passenger. Transaction rolled back: " + e.getMessage());
+            LoggerService.log("Rollback deleting passenger: " + e.getMessage());
+        } finally {
+            conn.setAutoCommit(true);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+ACTUALIZAR FECHA CANCELACIÓN TICKET
+
+UPDATE tickets SET date_of_cancellation = CURRENT_DATE WHERE ticket_number = ?;
+
+
+BUSCAR PASAJEROS Y TICKETS
+
+SELECT * FROM passengers WHERE firstname ILIKE ?; -- En Java: pst.setString(1, texto + "%");
+SELECT * FROM tickets WHERE price BETWEEN ? AND ?;
+
+muestra los 3 vuelos más largos" o "el pasajero que más ha gastado":
+
+SELECT flight_code, duration FROM flights ORDER BY duration DESC LIMIT 3;
+
+SELECT p.passportno, p.firstname, p.lastname, SUM(t.price) AS total_spent
+FROM passengers p
+INNER JOIN tickets t ON p.passportno = t.passportno
+WHERE t.date_of_cancellation IS NULL
+GROUP BY p.passportno, p.firstname, p.lastname
+ORDER BY total_spent DESC
+LIMIT 1;
+
+try (Connection conn = ConnectionManager.getConnection();
+     Statement stmt = conn.createStatement();
+     ResultSet rs = stmt.executeQuery(sql)) {
+
+    if (rs.next()) {
+        String name = rs.getString("firstname") + " " + rs.getString("lastname");
+        double total = rs.getDouble("total_spent");
+        System.out.println("Top spender: " + name + " (" + total + "€)");
+    } else {
+        System.out.println("No active tickets found.");
+    }
+}
+
+comprobar si pasaporte ya existe
+if ("23505".equals(e.getSQLState())) {
+    System.out.println("Error: Record already exists.");
+}
+
+mostrar generated keys:
+
+PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+pst.executeUpdate();
+ResultSet keys = pst.getGeneratedKeys();
+if (keys.next()) {
+    int newId = keys.getInt(1);
+}
+
+exportar a fichero:
+
+public static void exportFlightsToFile(String filename) {
+    String sql = "SELECT flight_code, duration, distance FROM flights ORDER BY flight_code";
+
+    try (Connection conn = ConnectionManager.getConnection();
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(sql);
+         PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(filename, false)))) {
+
+        // 1. Escribimos una cabecera (opcional, pero queda muy bien)
+        pw.println("FLIGHT_CODE;DURATION;DISTANCE");
+
+        // 2. Recorremos la tabla fila por fila y escribimos en el fichero
+        int count = 0;
+        while (rs.next()) {
+            String code = rs.getString("flight_code");
+            int duration = rs.getInt("duration");
+            int distance = rs.getInt("distance");
+
+            pw.println(code + ";" + duration + ";" + distance);
+            count++;
+        }
+
+        System.out.println("Exported " + count + " flights to " + filename);
+        LoggerService.log("Exported " + count + " flights to " + filename);
+
+    } catch (SQLException | IOException e) {
+        System.out.println("Error exporting flights: " + e.getMessage());
+        LoggerService.log("Error exporting flights: " + e.getMessage());
+    }
+}
+
+si ya tengo lista DTO pasarla a fichero:
+public static void exportListToFile(List<FlightPassengerDTO> list, String filename) {
+    try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(filename, false)))) {
+
+        pw.println("=== LISTADO DE PASAJEROS ===");
+
+        for (FlightPassengerDTO item : list) {
+            pw.println(item.toString()); // O item.getFlightCode() + ";" + item.getPassengerName()
+        }
+
+        System.out.println("File created successfully: " + filename);
+
+    } catch (IOException e) {
+        System.out.println("Error writing file: " + e.getMessage());
+    }
+}
+
+vuelos que no tienen billete vendido:
+
+SELECT f.flight_code
+FROM flights f
+LEFT JOIN tickets t ON f.flight_code = t.flight_code
+WHERE t.ticket_number IS NULL;
+
+poner una cantidad mínima having:
+
+SELECT passportno, SUM(price) AS total
+FROM tickets
+WHERE date_of_cancellation IS NULL
+GROUP BY passportno
+HAVING SUM(price) > 500;
+
+IGNORAR DUPLICADOS:
+
+INSERT INTO airlines (name, shortcode) VALUES (?, ?) ON CONFLICT DO NOTHING;
+
+VALIDATION EMAIL: private static final String EMAIL_REGEX = "^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+
+private static final String TELF_REGEX = "^[0-9]{9,12}$";

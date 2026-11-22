@@ -5,6 +5,7 @@ import java.time.format.DateTimeParseException;
 
 public class ValidationClass {
 
+    //we declare the variables that will confirm the codes written by parameters comply
     private static final String IATA_REGEX = "^[A-Za-z]{3}$";
     private static final String FLIGHT_CODE_REGEX = "^[A-Za-z0-9]{2,10}$";
     private static final String CUSTOMER_ID_REGEX = "^[A-Za-z0-9]{1,10}$";
