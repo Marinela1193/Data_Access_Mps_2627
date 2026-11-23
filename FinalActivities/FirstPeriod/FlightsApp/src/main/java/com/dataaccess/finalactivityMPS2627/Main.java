@@ -24,7 +24,7 @@ public class Main {
     private static final String DESTINATION_SHORT = "-d";
     private static final String DESTINATION_LONG = "--destinations";
     private static final String CANCELTICKET_SHORT = "-c";
-    private static final String CANCELTICKET_LONG = "-cancel";
+    private static final String CANCELTICKET_LONG = "--cancel";
 
     public static void main(String[] args) {
 

@@ -365,44 +365,42 @@ public class TicketsService {
                 "INNER JOIN passengers p ON t.passportno = p.passportno " +
                 "WHERE p.passportno = ? AND t.date_of_booking = ? AND t.date_of_cancellation IS NULL";
 
-        String sql1 = "DELETE FROM tickets WHERE ticket_number = ?";
+        String sql1 = "DELETE FROM tickets WHERE passportno = ?";
 
-        int ticketNumber = 0;
-
-        try (Connection conn = ConnectionManager.getConnection();
-             PreparedStatement pstmSelect = conn.prepareStatement(sql);
-             PreparedStatement pstmDelete = conn.prepareStatement(sql1);
-             ResultSet rsticketNumber = pstmSelect.executeQuery()) {
-
+        try(Connection conn = ConnectionManager.getConnection();
+            PreparedStatement pstmSelect = conn.prepareStatement(sql);
+            PreparedStatement pstmDelete = conn.prepareStatement(sql1)){
 
             pstmSelect.setString(1,customer_id);
             pstmSelect.setDate(2,Date.valueOf(localDate));
 
-            if(rsticketNumber.next()) {
+            try(ResultSet rsSelect = pstmSelect.executeQuery()){
+                if(rsSelect.next()) {
+                    pstmDelete.setString(1, customer_id);
 
-                ticketNumber =  rsticketNumber.getInt("ticket_number");
-                pstmDelete.setInt(1, ticketNumber);
-                int rows = pstmDelete.executeUpdate();
+                    int rows = pstmDelete.executeUpdate();
 
-                if (rows > 0) {
-                    System.out.println("Ticket " + ticketNumber + " deleted successfully.");
-                    LoggerService.log("Ticket " + ticketNumber + " deleted.");
-                } else {
-                    System.out.println("Error: Ticket " + ticketNumber + " not found.");
+                    if (rows > 0) {
+                        System.out.println("Ticket deleted successfully.");
+                        LoggerService.log("Ticket deleted.");
+                    } else {
+                        System.out.println("Error: Ticket not found.");
+                    }
+                }else{
+                    System.out.println("Error: Ticket number for this passenger and date not found.");
+                    LoggerService.log("Ticket number for this passenger and date not found.");
+                    return;
                 }
-
-            } else{
-                System.out.println("Error: Ticket number for this passenger and date not found.");
-                LoggerService.log("Ticket number for this passenger and date not found.");
-                return;
-
             }
 
-
-        }catch (SQLException | ClassNotFoundException e) {
-            System.out.println("Database error: " + e.getMessage());
-            LoggerService.log("Error in searchOrigins: " + e.getMessage());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
+
+
+
     }
 
 }
