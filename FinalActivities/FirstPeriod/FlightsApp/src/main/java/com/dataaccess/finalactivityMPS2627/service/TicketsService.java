@@ -367,11 +367,12 @@ public class TicketsService {
 
         String sql1 = "DELETE FROM tickets WHERE passportno = ? AND date_of_booking = ?";
 
-        //ME FALTA EL UPDATE PARA HACER UPDATE EN LA FECHA DE CANCELACION
+        String sql2 = "UPDATE tickets SET date_of_cancellation = CURRENT_DATE WHERE passportno = ? AND date_of_booking = ?";
 
         try(Connection conn = ConnectionManager.getConnection();
             PreparedStatement pstmSelect = conn.prepareStatement(sql);
-            PreparedStatement pstmDelete = conn.prepareStatement(sql1)){
+            PreparedStatement pstmDelete = conn.prepareStatement(sql1);
+            PreparedStatement pstmUpdate = conn.prepareStatement(sql2)){
 
             pstmSelect.setString(1,customer_id);
             pstmSelect.setDate(2,Date.valueOf(localDate));
@@ -386,10 +387,22 @@ public class TicketsService {
                     if (rows > 0) {
                         System.out.println("Ticket deleted successfully.");
                         LoggerService.log("Ticket deleted.");
+
+                        pstmUpdate.setString(1, customer_id);
+                        pstmUpdate.setDate(2, Date.valueOf(localDate));
+
+                        int rowsAffected = pstmUpdate.executeUpdate();
+                        if (rowsAffected > 0) {
+                            System.out.println("Ticket cancellation date updated successfully.");
+                            conn.commit();
+                        }
                     } else {
+                        conn.rollback();
                         System.out.println("Error: Ticket not found.");
                     }
                 }else{
+
+                    conn.rollback();
                     System.out.println("Error: Ticket number for this passenger and date not found.");
                     LoggerService.log("Ticket number for this passenger and date not found.");
                     return;
