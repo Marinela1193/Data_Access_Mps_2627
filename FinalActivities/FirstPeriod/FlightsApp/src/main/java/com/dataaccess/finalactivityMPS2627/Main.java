@@ -23,6 +23,8 @@ public class Main {
     private static final String ORIGINS_LONG = "--origins";
     private static final String DESTINATION_SHORT = "-d";
     private static final String DESTINATION_LONG = "--destinations";
+    private static final String CANCELTICKET_SHORT = "-c";
+    private static final String CANCELTICKET_LONG = "-cancel";
 
     public static void main(String[] args) {
 
@@ -68,11 +70,15 @@ public class Main {
             case BUY_SHORT:
             case BUY_LONG:
                 //we make sure we receive exactly 4 parameters
-                if (args.length != 4) {
+                if (args.length <4 || args.length > 5) {
                     System.out.println("Error: You must provide all information: customer id, flight id and date. \n");
                     LoggerService.log("Error: You must provide all information: customer id, flight id and date.");
                     showHelp();
-                }else {
+                }else if(args.length ==5){
+
+                    TicketsService.buyTicketsAndPrint(args[1], args[2], args[3]);
+                }
+                else {
                     //we call the method buyTickets, and we pass  the parameters received
                     TicketsService.buyTickets(args[1], args[2], args[3]);
                 }
@@ -101,6 +107,16 @@ public class Main {
                     FlightService.showDestinations(args[1]);
                 }
                 break;
+            case CANCELTICKET_SHORT:
+            case CANCELTICKET_LONG:
+                if(args.length != 3) {
+                    System.out.println("Error: you need to write the ID of the passenger and the date \n");
+                    LoggerService.log("Error: you need to write the ID of the passenger and the date");
+                    showHelp();
+                }else{
+                    TicketsService.cancelTicket(args[1], args[2]);
+                }
+                break;
             default:
                 //if we do not receive any of the parameters expected it will lead to an error that we will capture
                 //in our log, and we will show the help menu
@@ -117,9 +133,10 @@ public class Main {
         System.out.println("-h --help: show this help");
         System.out.println("-a, --add <filename.xml>: add the passengers in the XML file to the database.");
         System.out.println("-f, --flights <origin> <destination> <date>: show the flights available from origin to destination");
-        System.out.println("-b, --buy <customerId> <flightId> <date>: buy a ticket for a flight in a specific date");
+        System.out.println("-b, --buy <customerId> <flightId> <date> [--print]: buy a ticket for a flight in a specific date");
         System.out.println("-o, --origins show the origins of the flights");
         System.out.println("-d, --destinations <origin>: show the destinations of the flights from origin");
+        System.out.println("-c, --cancel <customerId> <date>: cancel the ticket bought by the passenger");
     }
 
 }
