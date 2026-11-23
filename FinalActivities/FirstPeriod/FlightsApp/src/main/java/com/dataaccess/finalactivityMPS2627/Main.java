@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public class Main {
 
-    //declaramos las opciones como variables para facilitar el código
+    //declaramos las opciones como variables para facilitar el código.
 
     private static final String HELP_SHORT = "-h";
     private static final String HELP_LONG = "--help";
