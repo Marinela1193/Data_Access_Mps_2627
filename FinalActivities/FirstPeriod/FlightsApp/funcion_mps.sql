@@ -25,8 +25,8 @@ BEGIN
         f.airlineid, 
         f.distance, 
         f.plane, 
-        (p.total_seats - COUNT(t.flight_code))::INTEGER AS free_seats, 
-        fn_date AS travel_date
+        p.total_seats,
+        COUNT(* )t.ticket_number
     FROM flights f
     INNER JOIN airports a_origin ON f.source = a_origin.code
     INNER JOIN airports a_destin ON f.destination = a_destin.code

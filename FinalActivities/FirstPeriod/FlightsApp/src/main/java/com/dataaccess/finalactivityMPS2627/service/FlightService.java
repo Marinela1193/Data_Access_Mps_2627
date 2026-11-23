@@ -52,7 +52,7 @@ public class FlightService {
                     System.out.println("Airline: " + rs.getString(7));
                     System.out.println("Distance: " + rs.getString(8));
                     System.out.println("Plane: " + rs.getString(9));
-                    System.out.println("Free seats: " + rs.getString(10));
+                    System.out.println("Total seats: " + rs.getString(10));
                     System.out.println("Date: " + rs.getString(11));
                 }
                 if (!found) {
