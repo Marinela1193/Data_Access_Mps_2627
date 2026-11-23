@@ -365,7 +365,7 @@ public class TicketsService {
                 "INNER JOIN passengers p ON t.passportno = p.passportno " +
                 "WHERE p.passportno = ? AND t.date_of_booking = ? AND t.date_of_cancellation IS NULL";
 
-        String sql1 = "DELETE FROM tickets WHERE passportno = ? AND t.date_of_booking = ?";
+        String sql1 = "DELETE FROM tickets WHERE passportno = ? AND date_of_booking = ?";
 
         //ME FALTA EL UPDATE PARA HACER UPDATE EN LA FECHA DE CANCELACION
 
